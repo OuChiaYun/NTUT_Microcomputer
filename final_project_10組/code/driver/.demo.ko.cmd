@@ -1,0 +1,1 @@
+cmd_/home/nvidia/nodejs/driver/demo.ko := ld -EL -r  -T ./scripts/module-common.lds -T ./arch/arm64/kernel/module.lds --build-id  -o /home/nvidia/nodejs/driver/demo.ko /home/nvidia/nodejs/driver/demo.o /home/nvidia/nodejs/driver/demo.mod.o ;  true

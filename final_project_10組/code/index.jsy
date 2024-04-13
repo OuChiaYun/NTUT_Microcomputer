@@ -1,0 +1,57 @@
+const express = require("express");
+const app = express();
+
+app.use(express.static('./public'));
+
+app.get("/index", (req, res) => {
+    var i;
+    
+    var y = test().then(function(){
+        return "hi";
+    })
+
+    
+    var s = {
+        "a" : y,
+        "b" : req.query.MODE1
+
+    }
+    res.send(s);
+    //res.send("hi"); // 将动态内容发送回客户端
+
+})
+
+function test(){
+
+    return new Promise(function(resolve,reject){
+        
+        let child_process = require("child_process");
+        let process = child_process.spawn('python',[
+            "python/lab5_2.py"
+        ]);
+
+        process.stdout.on('data',(data)=>{
+            console.log(`stdout:${data}`);
+            resolve("hi")
+       
+        });
+
+        process.stderr.on('data',(data)=>{
+            console.error(`stderr:${data}`);
+            reject(data)
+        });
+
+    })
+
+}
+function kk(r){
+    app.get("/index", (res) => {
+        res.send(r);
+    })
+    
+}
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+})
+

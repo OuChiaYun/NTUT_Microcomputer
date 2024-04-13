@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+
+<head>
+    <style>
+        /* 字體改不了:( */
+        /* 中文 & 英文 */
+        /* @font-face {
+            font-family: 'Microsoft JhengHei';
+            src: url('C:/Windows/Fonts/msjh.ttc') format('ttc');
+            unicode-range: U+4E00-9FFF;
+        }
+
+        @font-face {
+            font-family: 'Microsoft Sans Serif';
+            src: url('C:/Windows/Fonts/micross.ttf') format('ttf');
+            unicode-range: U+0000-024F;
+        } */
+
+        body {
+            background: #1f2b37;;
+            color:  #77F2A1;
+            font-family: "Microsoft JhengHei", "Courier New";
+        }
+
+        input[type="text"], textarea {
+            background-color: #F9F9F9;
+            border: 3px solid #77F2A1; /* 設定邊框寬度、樣式和顏色 */
+        }
+        input[type="text"]:focus {
+            outline: 3px dashed #77F2A1;
+            border-color: #77F2A1;
+        }
+
+        button {
+            background-color: #f9f9f9; /*使用藍色背景*/
+            color: #4F76F6;
+            border-radius: 5px; /* 設定圓角半徑為 5 像素 */
+        }
+
+        .btn1 {
+            width: 80px;
+            height: 30px;
+        }
+        .btn2 {
+            width: 100px;
+            height: 30px;
+        }
+        .btn3 {
+            width: 80px;
+            height: 30px;
+        }
+        .btn4 {
+            width: 80px;
+            height: 30px;
+        }
+        .btn5 {
+            width: 80px;
+            height: 30px;
+        }
+        /* 鼠標放上去 */
+        button:hover {
+            background-color: #4F76F6;
+            color: #f9f9f9;
+        }
+
+        /* submit按鈕 */
+        .btn6 {
+            background-color: #f9f9f9; /*使用藍色背景*/
+            color: #4F76F6;
+            border-radius: 5px; /* 設定圓角半徑為 5 像素 */
+            width: 80px;
+            height: 30px;
+        }
+        .btn6:hover {
+            background-color: #4F76F6;
+            color: #f9f9f9;
+        }
+
+        .customRange {
+            /* 自訂滑動條的樣式 */
+            background-color: #77F2A1;
+            border-radius: 5px;
+        }
+        .customRange::-webkit-slider-thumb {
+            /* 自訂滑動條的拖曳按鈕樣式 */
+            border-radius: 5px;
+            cursor: e-resize;
+        }
+
+        .customNumber {
+            /* 自訂數字輸入框的樣式 */
+            width: 50px;
+            height: 15px;
+            padding: 5px;
+            border: 3px solid #77F2A1;
+            border-radius: 5px;
+        }
+        .customNumber:focus {
+            outline: 3px dashed #77F2A1;
+            border-color: #77F2A1;
+        }
+    </style>
+</head>
+
+<head>
+    <title>智慧烹飪系統</title>
+    <script type='text/javascript' src='final.js'></script>
+</head>
+
+<body>
+    <p>
+    <h1><strong>智慧烹飪系統</strong></h1>
+    </p>
+
+    <hr />
+
+    <div id='PANEL'>
+        <form action="./index1" method="get" onsubmit="return false;">
+            <h2>快速烹飪</h2>
+            請輸入食材名稱:<input type="text" name="foodName" id="inputText">
+            <button type="submit" class="btn1" onclick="addCheckbox(); return false;">發送</button>
+            <div id="outputCheckbox"></div>
+            <button type="submit" class="btn2" onclick="GetResult1();">放入料理槽</button>
+        </form>
+
+        <form action="./index2" method="get" onsubmit="return false;">
+            <br>
+            冷凍or微波?
+            <input type="radio" name="ways" value="cold" id="freeze" onchange="freezeNumber()">冷凍
+            <input type="radio" name="ways" value="microwave" id="microwave" onchange="microwaveSlider()">微波
+            <br>
+
+            <div style="display: none;" id="time">
+                <label for="time">時間(分):</label>
+                <input type="range" class="customRange" id="choosetime" name="cooktime" min="0" max="100">
+                <button type="submit" class="btn3" onclick="cook();GetResult2(); return false;" id="start">開始</button>
+            </div>
+
+            <div style="display: none;" id="days">
+                <label for="days">保存天數(天):</label>
+                <input type="number" class="customNumber" id="choosedays" name="cooktime" min="1" max="100">
+                <button type="submit" class="btn4" onclick="cook();GetResult2();return false;" id="start">開始</button>
+            </div>
+
+        </form>
+
+        <div id="output"></div>
+
+        <hr />
+        <form action="./index3" method="get" onsubmit="return false;">
+            <h2>是否需要郵件通知?</h2>
+            <input type="radio" name="email" id="emaily" value="yes">是</button>
+            <input type="radio" name="email" id="emailn" value="no">否</button>
+            <button type="submit" class="btn5" onclick="GetResult3();" id="email">送出</button>
+        </form>
+        <hr />
+    </div>
+
+    <form action="./index4" method="get" onsubmit="return false;">
+        <div id='MODE_name'>
+            <h2>
+                是否進行環境偵測?
+            </h2>
+        </div>
+
+        <!-- DETECT -->
+        <div id='LABEL' style="display:none">
+
+            <p>
+            <h2><strong>感測器偵測中</strong></h2>
+            </p>
+
+        </div>
+        <div id='NONO' style="display:none">
+
+            <p>
+            <h2><strong></strong></h2>
+            </p>
+
+        </div>
+
+        <!-- 光敏電阻感應數值 -->
+
+        <div id='LABEL2' style="display:none">
+            <p>
+            <h2><strong> </strong></h2>
+            </p>
+        </div>
+        <input type="submit" class="btn6" value="submit1" onclick="detect();">
+        <input type="radio" name="MODE" value="1">DETECT
+        <input type="radio" name="MODE" value="0">NO_DETECT
+
+    </form>
+
+    <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+
+    <script>
+
+        var thing_count = 0;
+        function addCheckbox() {
+
+
+            if (thing_count >= 4) {
+
+                var outputElement = document.getElementById('outputCheckbox');
+                var firstCheckbox = outputElement.querySelector('input[type="checkbox"]');
+                var firstTextNode = firstCheckbox.nextSibling;
+
+                if (firstCheckbox && firstTextNode) {
+                    outputElement.removeChild(firstCheckbox);
+                    outputElement.removeChild(firstTextNode);
+                    thing_count -= 1;
+                }
+            }
+
+
+            if (thing_count < 4) {
+                var inputElement = document.getElementById('inputText');
+                var outputElement = document.getElementById('outputCheckbox');
+                var text = inputElement.value;
+
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'checkbox';
+                checkbox.value = text;
+
+                outputElement.appendChild(checkbox);
+                outputElement.appendChild(document.createTextNode(text));
+                thing_count += 1;
+            }
+        }
+
+        function microwaveSlider() {
+            var microwaveOption = document.querySelector('input[name="ways"][value="microwave"]');
+            var rangeSliderContainer = document.querySelector('div[id="time"]');
+            var freezeOption = document.querySelector('input[name="ways"][value="cold"]');
+            var numberDays = document.querySelector('div[id="days"]');
+
+            if (microwaveOption.checked) {
+                numberDays.style.display = 'none';
+                rangeSliderContainer.style.display = 'block';
+            } else {
+                rangeSliderContainer.style.display = 'none';
+            }
+        }
+
+        function freezeNumber() {
+            var freezeOption = document.querySelector('input[name="ways"][value="cold"]');
+            var numberDays = document.querySelector('div[id="days"]');
+            var microwaveOption = document.querySelector('input[name="ways"][value="microwave"]');
+            var rangeSliderContainer = document.querySelector('div[id="time"]');
+
+            if (freezeOption.checked) {
+                rangeSliderContainer.style.display = 'none';
+                numberDays.style.display = 'block';
+            } else {
+                numberDays.style.display = 'none';
+            }
+        }
+
+        function cook() {
+            var inputElement = document.getElementById('inputText');
+            var inputValue = inputElement.value;
+            var microwaveOption = document.querySelector('input[name="ways"][value="microwave"]');
+            var freezeOption = document.querySelector('input[name="ways"][value="cold"]');
+            if ((inputValue.trim() == '') || (document.querySelector('input[id="choosedays"]').value.trim() == '') || (!microwaveOption.checked && !freezeOption.checked)) {
+                return false;
+            }
+
+            var checkboxes = document.getElementsByName('checkbox');
+            var choose = document.getElementsByName('ways');
+
+            var chosenWay = '';
+            for (var i = 0; i < choose.length; i++) {
+                if (choose[i].checked) {
+                    chosenWay = choose[i].value;
+                    break;
+                }
+            }
+
+            if (freezeOption.checked) {
+                var time = document.querySelector('input[id="choosedays"]').value;
+            }
+            else if (microwaveOption.checked) {
+                var time = document.querySelector('input[id="choosetime"]').value;
+            }
+
+            var text = '';
+            var checkedCount = 0;
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    checkedCount++;
+                }
+            }
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    text += checkboxes[i].value;
+                    if (checkedCount > 1) {
+                        text += ', ';
+                        checkedCount--;
+                    }
+                }
+            }
+
+            if (freezeOption.checked) {
+                text += ': ' + chosenWay + time + '天';
+            }
+            else if (microwaveOption.checked) {
+                text += ': ' + chosenWay + time + '分鐘';
+            }
+            var outputElement = document.getElementById('output');
+            outputElement.textContent = text;
+
+        }
+
+
+        function GetResult1() {
+            var inputText = $('#inputText').val();
+            var selectedCheckboxTexts = [];
+
+            //console.log("dawoi")
+            $("input[type='checkbox']").each(function () {
+                var checkboxValue = $(this).is(":checked") ? $(this).val() : "x";
+                selectedCheckboxTexts.push(checkboxValue);
+            });
+
+            for (var i = thing_count; i < 4; i++) {
+                selectedCheckboxTexts.push("x");
+            }
+
+
+            $.ajax({
+                type: "get",
+                url: "/index1",
+                data: {
+                    foodName: inputText,
+                    allthing: selectedCheckboxTexts
+                },
+                success: function (result) {
+
+                },
+                error: function () {
+                }
+            })
+
+        }
+        function GetResult2() {
+            var ratioValue = $("input[name='ways']:checked").val();
+            var rangeValue = 50;
+
+            if(ratioValue == 'microwave'){
+                rangeValue = $('#choosetime').val();
+            }
+
+            if(ratioValue == 'cold'){
+                rangeValue = $('#choosedays').val();
+            }
+
+
+            $.ajax({
+                type: "get",
+                url: "/index2",
+                data: {
+                    cookway: ratioValue,
+                    time: rangeValue
+                },
+                success: function (result) {
+
+                },
+                error: function () {
+                }
+            })
+
+        }
+        function GetResult3() {
+            var ratioValue = $("input[name='email']:checked").val();
+            $.ajax({
+                type: "get",
+                url: "/index3",
+                data: {
+                    email: ratioValue
+                },
+                success: function (result) {
+
+                },
+                error: function () {
+                }
+            })
+
+        }
+	var check = 0;
+        function detect_adv() {
+
+            $.ajax({
+                type: "get",
+                url: "/index4",
+		data:{
+			check: check		
+		},
+                success: function (result) {
+
+                    var label2 = "adc_value=" + result;
+
+                    $('#LABEL2').text(label2);
+
+                },
+                error: function () {
+                }
+            })
+		if(check ==1){
+			check = 0;		
+		}
+        }
+        var timer = 0;
+
+        //var val = 0;
+
+        function detect() {
+
+            val = $('input:radio[name="MODE"]:checked').val();
+            if (val == "1") {
+                //detect_adv();
+                $("#MODE_name").hide();
+                $("#LABEL").show();
+                $("#LABEL2").show();
+                $("#PANEL").hide();
+		check = 1;
+                if (timer == 0) {
+                    timer = setInterval(detect_adv, 1000); // 创建新的定时器
+                }
+
+
+            } else if (val == "0") {
+                $("#MODE_name").show();
+                $("#LABEL").hide();
+                $("#LABEL2").hide();
+                $("#PANEL").show();
+                clearInterval(timer);
+                timer = 0;
+            }
+
+        }
+    </script>
+</body>
+
+</html>
