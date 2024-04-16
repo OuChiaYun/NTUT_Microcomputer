@@ -1,0 +1,123 @@
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id='MODEE'></div>
+    <p>
+        <h1><strong>Nodejs</strong></h1>
+    </p>
+
+    <hr />
+
+    <form action="./index" method="get" onsubmit="false">
+        <div id='MODE_name'>
+            <p>
+                請選擇模式
+            </p>
+        </div>
+
+        <!-- DETECT -->
+        <div id='LABEL' style="display:none">
+
+            <p>
+                <h2><strong>感測器偵測中</strong></h2>
+            </p>
+
+        </div>
+        <div id='NONO' style="display:none">
+
+            <p>
+                <h2><strong></strong></h2>
+            </p>
+
+        </div>
+
+        <!-- 光敏電阻感應數值 -->
+
+        <div id='LABEL2' style="display:none">
+            <p>
+                <h2><strong> </strong></h2>
+            </p>
+        </div>
+
+        <!-- NO_DETCET -->
+
+        <div id='PANEL' style="display:none">
+            <p>
+                <h2><strong>手動控制面板</strong></h2>
+            </p>
+            <p>
+                <h2><strong>LED Control Panel</strong></h2>
+            </p>
+            <input type="checkbox" name="LED" value="0">LED1
+            <input type="checkbox" name="LED" value="1">LED2
+            <br>
+            <input type="submit" name="submit2">
+            <input type="radio" name="MODE2" value="ON">ON
+            <input type="radio" name="MODE2" value="OFF">OFF
+
+            <hr />
+
+            <h2>LED Switch Frequency</h2>
+            <input type="text" name="TIME">
+            <input type="submit" name="button" value="Mode_Shine">
+            <br>
+        </div>
+
+        <input type="submit" value="submit1" onclick="func1()">
+        <input type="radio" name="MODE" value="1">DETECT
+        <input type="radio" name="MODE" value="0">NO_DETECT
+
+    </form>
+    <iframe id="id_iframe" name="nm_iframe" style="display:none;"></iframe>
+
+    <script>
+        $("#MODEE").css("fontSize", 40);
+
+        function GetResult1() {
+            $.ajax({
+                type: "get",
+                url: "/index",
+                success: function(result) {
+                    var label2 = "adc_value=" + result;
+                    $('#LABEL2').text(label2);
+                },
+                error: function() {
+                    //alert("error");
+                }
+            })
+
+        }
+
+        function func() {
+
+            return false;
+
+        }
+        var timer = setInterval(GetResult1, 2000);
+
+        function func1() {
+
+            var val = $('input:radio[name="MODE"]:checked').val();
+            if (val == "1") {
+                GetResult1();
+                $("#MODE_name").hide();
+                $("#LABEL").show();
+                $("#LABEL2").show();
+
+
+            } else if (val == "0") {
+                $("#LABEL").hide();
+                $("#LABEL2").hide();
+                $("#PANEL").show();
+                clearInterval(timer);
+
+            }
+
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,2 @@
+/home/nvidia/hellod.o
+
